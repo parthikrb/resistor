@@ -12,6 +12,7 @@ EXPOSE 8000
 ARG DEV=false
 RUN python -m venv /resistor && \
     /resistor/bin/pip install --upgrade pip && \
+    apk add --update --no-cache gcc musl-dev python3-dev libffi-dev openssl-dev cargo && \
     apk add --update --no-cache postgresql-client && \
     apk add --update --no-cache --virtual .tmp-build-deps \
     build-base postgresql-dev musl-dev && \
