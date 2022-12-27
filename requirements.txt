@@ -6,3 +6,4 @@ drf-spectacular>=0.25.1,<0.26
 # For Authentication
 djangorestframework-simplejwt>=5.2.2,<5.3
 cryptography>=38.0.4,<38.1
+django-cors-headers >= 3.10.0,<3.11
