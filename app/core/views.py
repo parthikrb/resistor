@@ -6,7 +6,9 @@ from rest_framework_simplejwt.views import (
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import UserSerializer
+from rest_framework.permissions import IsAuthenticated
+
+from .serializers import UserSerializer, MeSerializer
 
 class RegisterView(GenericAPIView):
     serializer_class = UserSerializer
@@ -19,6 +21,15 @@ class RegisterView(GenericAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MeView(GenericAPIView):
+    serializer_class = MeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = self.serializer_class(request.user)
+        return Response(serializer.data)
 
 class LoginView(TokenObtainPairView):
     """Login view."""

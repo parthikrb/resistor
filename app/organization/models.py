@@ -16,6 +16,11 @@ class Organization(models.Model):
         related_name='organizations_employed',
         blank=True
     )
+    manager = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='organizations_managed'
+    )
 
 
     def __str__(self):
@@ -49,3 +54,15 @@ class Team(models.Model):
 
     def __str__(self):
         return self.name
+
+class Sprint(models.Model):
+    """Sprint model."""
+    name=models.CharField(max_length=255)
+    start_date=models.DateField()
+    end_date=models.DateField()
+    release=models.CharField(max_length=255, blank=True)
+    team=models.ForeignKey(
+        Team,
+        on_delete=models.CASCADE,
+        related_name='sprints'
+    )

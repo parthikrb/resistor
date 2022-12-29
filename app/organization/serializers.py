@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
-from .models import Organization, Team
+from .models import Organization, Team, Sprint
 
 def get_user(user):
     return {
@@ -12,11 +12,28 @@ def get_user(user):
         'last_name': user.last_name,
     }
 
+class SprintSerializer(serializers.ModelSerializer):
+    """Sprint serializer."""
+
+    class Meta:
+        model = Sprint
+        fields = '__all__'
+        read_only_fields = ['id']
+
+    def validate(self, data):
+        if self.context['request'].user != self.context['team'].manager:
+            raise serializers.ValidationError('You are not the manager of this team.')
+        return data
+
+    def create(self, validated_data):
+        sprint = Sprint.objects.create(**validated_data)
+        return sprint
+
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
-        fields = ['id', 'name', 'created_at', 'updated_at', 'created_by', 'employees', 'organization', 'manager']
-        read_only_fields = ['created_at', 'updated_at', 'created_by', 'organization']
+        fields = '__all__'
+        read_only_fields = ['created_at', 'updated_at', 'created_by']
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -25,7 +42,6 @@ class TeamSerializer(serializers.ModelSerializer):
         data['created_by'] = get_user(user)
         data['employees'] = [get_user(employee) for employee in instance.employees.all()]
         data['employees_count'] = instance.employees.count()
-        data['organization'] = instance.organization.id
 
         manager = User.objects.get(id=instance.manager.id)
         data['manager'] = get_user(manager)
@@ -34,7 +50,7 @@ class TeamSerializer(serializers.ModelSerializer):
 class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
-        fields = ['id', 'name', 'created_at', 'updated_at', 'created_by', 'employees', 'teams']
+        fields = '__all__'
         read_only_fields = ['created_at', 'updated_at', 'created_by']
 
     def to_representation(self, instance):
