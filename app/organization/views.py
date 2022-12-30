@@ -2,6 +2,8 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+from django.db.models import Q
+
 from .models import Organization, Team, Sprint
 from .serializers import OrganizationSerializer, TeamSerializer, SprintSerializer
 
@@ -28,7 +30,10 @@ class TeamView(viewsets.ModelViewSet):
     def get_queryset(self):
         if self.request.user.is_superuser:
             return self.queryset
-        return Team.objects.filter(employees = self.request.user)
+
+        return Team.objects.filter(
+            Q(employees = self.request.user) | Q(manager = self.request.user)
+        )
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
