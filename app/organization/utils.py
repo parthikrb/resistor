@@ -30,5 +30,5 @@ def send_invitation_email(to, subject, body):
 def invite_user(to, organization, invitation_code):
     subject = f'Invitation to join {organization.name}'
     body = f'You have been invited to join {organization.name}! To accept the invitation, click the link below:\n'
-    body += f'http://localhost:4200/join/{invitation_code}'
+    body += f'http://localhost:4200/join?token={invitation_code}'
     send_invitation_email(to, subject, body)

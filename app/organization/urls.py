@@ -11,7 +11,7 @@ router.register('sprint', SprintView, basename='sprint')
 
 urlpatterns = [
     path('', include(router.urls)),
-     path('invitation/', InvitationView.as_view(), name='invitation'),
+     path('invite-employee/', InvitationView.as_view(), name='invitation'),
      path('join/', EmployeeSignUpView.as_view(), name='join'),
 ]
 
